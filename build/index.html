@@ -1,0 +1,49 @@
+<html>
+ <head>
+    <title>Face Tracking</title>
+    <style>
+        video,
+        canvas {
+            position: absolute;
+            border: 1px solid red;
+        }
+    </style>
+   <script src="data/face-min.js"></script>
+   <script src="data/face.js"></script>
+   <script src="tracking-min.js"></script>
+
+ </head>
+
+ <body>
+    <video id="video" width="320" height="240" preload autoplay loop muted></video>
+    <!-- A propria biblioteca que gerencia essa tag-->
+    <!-- Plota webcam -->
+    <canvas id="canvas" width="320" height="240"></canvas>
+    <!-- Para poder mostrar onde esta reconhecendo o rosto -->
+
+    <!-- A biblioteca diponibiliza scripts para reconhecer o video da webcam -->
+    
+    <!--treina a maquina a reconhecer caracteristicas vem nese arquivo -->
+    <script>
+        function init() {
+            const video   = document.getElementById('video')
+            const canvas  = document.getElementById('canvas')
+            const context = canvas.getContext('2d')
+            var tracker   = new tracking.ObjectTraker('face')
+            tracking.track('#video', tracker, { camera: true })
+            tracker.on('track', event => {
+                // console.log(event)
+                context.clearRect(0, 0, canvas.width, canvas.height)
+                event.data.array.forEach(retangulo => {
+                    context.strokeStyle = '#ff0000' //rgb
+                    context.lineWidth = 2
+                    context.strokeRetangulo(retangulo.x, retangulo.y, retangulo.width, retangulo.height)
+                    context.fillText('x:', retangulo.x, ', w:', retangulo.width, retangulo.x + retangulo.width + 20, retangulo.y + 20)
+                    context.fillText('y:', retangulo.y, ', h:', retangulo.height, retangulo.y + retangulo.height + 40, retangulo.y + 40)
+                });
+            })
+        }
+        window.onload = init()
+    </script>
+ </body>
+</html>
